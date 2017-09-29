@@ -1,3 +1,3 @@
-字體: 9
-顏色: Dev C++ Classic Plus
-行距: 固定行高 -> 10
+font-size: 9
+syntax-highlighting: Dev C++ Classic Plus
+line-height: 固定行高 -> 10
