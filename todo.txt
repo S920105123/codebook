@@ -2,4 +2,4 @@ codebook
 有限背包單調佇列
 
 一般圖最大匹配
-強連通分量
+AP & BRIDGE
