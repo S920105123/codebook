@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 const double PI=acos(-1);
 template<class T>
 struct Point {
@@ -30,7 +27,7 @@ struct Point {
 	Point<T> normal() { // Normal vector
 		return {-y,x};
 	}
-	Point<T> len() { // length
+	T len() { // length
 		return sqrt(x*x+y*y);
 	}
 	T angle(const Point<T> &v) {
@@ -39,7 +36,7 @@ struct Point {
 	}
 };
 
-template<class T> 
+template<class T>
 struct Line {
 	// Also a segment
 	Point<T> p1,p2;
@@ -51,6 +48,12 @@ struct Line {
 		b=p2.x-p1.x;
 		c=-a*p1.x-b*p1.y;
 	}
+    void pton() {
+        // IMPORTANT if you don't use constructor.
+        a=p1.y-p2.y;
+		b=p2.x-p1.x;
+		c=-a*p1.x-b*p1.y;
+    }
 	int relation(const Point<T> &p) {
 		// For line, 0 if point on line
 		// -1 if left, 1 if right
@@ -58,12 +61,15 @@ struct Line {
 		T crs=dir.cross(p-p1);
 		return crs==0?0:crs<0?-1:1;
 	}
+	Point<T> normal() {
+		Point<T> dir=p2-p1;
+		return {-dir.y,dir.x};
+	}
 	bool on_segment(const Point<T> &p) { // Point on segment
 		return relation(p)==0&&(p2-p).dot(p1-p)<=0;
 	}
 	bool parallel(const Line<T> &l) { // Two line parallel
-		Point<T> dir=p2-p1;
-		return dir.cross(l.dir)==0;
+		return (p2-p1).cross(l.p2-l.p1)==0;
 	}
 	bool equal(const Line<T> &l) { // Two line equal
 		return relation(l.p1)==0&&relation(l.p2)==0;
@@ -72,12 +78,13 @@ struct Line {
 		Point<T> dir=p2-p1;
 		return dir.cross(seg.p1-p1)*dir.cross(seg.p2-p1)<=0;
 	}
-	Point<T> intersection(const Line<T> &l) { // Intersection of lines
+	Point<T> line_intersection(const Line<T> &l) const{ // Intersection of lines
 		T deno=a*l.b-l.a*b;
 		if (deno!=0) {
-			return { l.c*b-c*l.b/deno, l.a*c-a*l.c};
+			return { (l.c*b-c*l.b)/deno, (l.a*c-a*l.c)/deno};
 		}
 		// Reaches here means no intersection. (parallel)
+        return {1234,4321};
 	}
 	int seg_intersect(const Line<T> &s) const{ // Two segment intersect
 		// 0 -> no, 1 -> one point, -1 -> infinity
@@ -87,7 +94,6 @@ struct Line {
 		T c3=dir2.cross(p2-s.p1);
 		T c4=dir2.cross(p1-s.p1);
 		if (c1==0&&c2==0) {
-			// Don't need to be so complicated if ignore INF
 			if((s.p2-p1).dot(s.p1-p1)>0&&(s.p2-p2).dot(s.p1-p2)>0&&
 			   (p1-s.p1).dot(p2-s.p1)>0&&(p1-s.p2).dot(p2-s.p2)>0)return 0;
 			if(p1==s.p1&&(p2-p1).dot(s.p2-p1)<=0)return 1;
@@ -105,8 +111,6 @@ struct Line {
 		T c3=dir2.cross(p2-s.p1);
 		T c4=dir2.cross(p1-s.p1);
 		if (c1==0&&c2==0) {
-			if((s.p2-p1).dot(s.p1-p1)>0&&(s.p2-p2).dot(s.p1-p2)>0&&
-			   (p1-s.p1).dot(p2-s.p1)>0&&(p1-s.p2).dot(p2-s.p2)>0)return 0;
 			if(p1==s.p1&&(p2-p1).dot(s.p2-p1)<=0)return p1;
 			if(p1==s.p2&&(p2-p1).dot(s.p1-p1)<=0)return p1;
 			if(p2==s.p1&&(p1-p2).dot(s.p2-p2)<=0)return p2;
@@ -114,6 +118,7 @@ struct Line {
 		}else if(c1*c2<=0&&c3*c4<=0)return line_intersection(s);
 		// Reaches here means either INF or NOT ANY
 		// Use seg_intersect to check OuO
+        return {1234,4321};
 	}
 	T dist(const Point<T> &p, bool is_segment) const {
 		// Point to Line/segment
@@ -122,7 +127,7 @@ struct Line {
 			if (dir.dot(v)<0) return v.len();
 			if ((p1-p2).dot(p-p2)<0) return (p-p2).len();
 		}
-		T d=abs(dir.cross(v))/sqrt(v.len2);
+		T d=abs(dir.cross(v))/dir.len();
 		return d;
 	}
 };
@@ -137,14 +142,11 @@ struct Polygon {
 		}
 		return abs(res/2.0);
 	}
-	
+
 };
 
 template <class T>
 struct Circle {
 	T r; // Radius
 	Point<T> c; // Center
-	
 };
-
-int main() {}
