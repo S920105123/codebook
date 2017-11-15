@@ -21,3 +21,9 @@
 
 一矩陣A所有eigen value之合=對角線合
 一矩陣A所有eigen value之積=det(A)
+
+三角形ABC, 對邊長abc:
+area=sqrt(s(s-a)(s-b)(s-b)), s=周長/2
+a/sinA = b/sinB = c/sinC = 2R, R為外接圓半徑
+內接圓半徑=2*area/(a+b+c)
+外接圓半徑=abc/4*area
