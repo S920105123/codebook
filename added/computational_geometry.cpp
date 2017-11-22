@@ -69,20 +69,25 @@ struct Line {
 		Point dir=p2-p1;
 		return {-dir.y,dir.x};
 	}
-	bool on_segment(const Point &p) { // Point on segment
+	bool on_segment(const Point &p) {
+		// Point on segment
 		return relation(p)==0&&(p2-p).dot(p1-p)<=0;
 	}
-	bool parallel(const Line &l) { // Two line parallel
+	bool parallel(const Line &l) {
+		// Two line parallel
 		return (p2-p1).cross(l.p2-l.p1)==0;
 	}
-	bool equal(const Line &l) { // Two line equal
+	bool equal(const Line &l) {
+		// Two line equal
 		return relation(l.p1)==0&&relation(l.p2)==0;
 	}
-	bool cross_seg(const Line &seg) { // Line intersect segment
+	bool cross_seg(const Line &seg) {
+		// Line intersect segment
 		Point dir=p2-p1;
 		return dir.cross(seg.p1-p1)*dir.cross(seg.p2-p1)<=0;
 	}
-	int seg_intersect(const Line &s) const{ // Two segment intersect
+	int seg_intersect(const Line &s) const{
+		// Two segment intersect
 		// 0 -> no, 1 -> one point, -1 -> infinity
 		Point dir=p2-p1, dir2=s.p2-s.p1;
 		double c1=dir.cross(s.p2-p1);
@@ -100,7 +105,8 @@ struct Line {
 		}else if(c1*c2<=0&&c3*c4<=0)return 1;
 		return 0;
 	}
-	Point line_intersection(const Line &l) const{ // Intersection of lines
+	Point line_intersection(const Line &l) const{
+		// Intersection of lines
 		// pton(); l.pton();
 		double deno=a*l.b-l.a*b;
 		if (deno!=0) {
@@ -147,12 +153,14 @@ struct Polygon {
 		}
 		return abs(res/2.0);
 	}
-
+	bool contain(const Point &p) {
+		// Point can't on side
+		int i, j, k = 0;
+	    for(i = 0, j = V.size()-1; i < V.size(); j = i++) {
+	        if(V[i].y > p.y != V[j].y > p.y &&
+	           p.x < (V[j].x-V[i].x)*(p.y-V[i].y)/(V[j].y-V[i].y)+V[i].x)
+	           k++;
+	    }
+	    return k&1;
+	}
 };
-
-struct Circle {
-	double r; // Radius
-	Point c; // Center
-};
-
-
