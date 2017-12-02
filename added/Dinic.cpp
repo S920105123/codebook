@@ -44,7 +44,7 @@ struct Dinic{
         return level[t]!=0;
     }
 
-    T DFS(int s,int cur_flow){ // can't exceed c
+    T DFS(int s,T cur_flow){ // can't exceed c
         if(s==end) return cur_flow;
 
         T ans = 0, temp, total = 0;
