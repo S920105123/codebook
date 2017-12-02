@@ -1,8 +1,6 @@
-#include <iostream>
-#include <queue>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
-const int maxn = 1000+10;
+const int maxn = 100+10;
 const int INF = 2147483647;
 template<class T>
 struct Dinic{
@@ -15,6 +13,7 @@ struct Dinic{
     vector<int> G[maxn];
     vector<Edge> es;
     int level[maxn],st, end, n;
+    int cur[maxn];
 
     void init(int _n){
         n = _n;
@@ -44,12 +43,12 @@ struct Dinic{
         return level[t]!=0;
     }
 
-    T DFS(int s,T cur_flow){ // can't exceed c
+    T DFS(int s,int cur_flow){ // can't exceed c
         if(s==end) return cur_flow;
 
         T ans = 0, temp, total = 0;
 
-        for(int i=0; i<G[s].size(); i++){
+        for(int& i=cur[s]; i<G[s].size(); i++){
             Edge &e = es[ G[s][i] ];
             if(e.c==0 || level[e.to]!=level[s]+1) continue;
             temp = DFS(e.to, min(e.c, cur_flow));
@@ -69,6 +68,7 @@ struct Dinic{
         st = s, end = t;
         while(BFS(s,t)){
             while(true){
+                memset(cur, 0, sizeof(cur));
                 T temp = DFS(s,INF);
                 if(temp==0) break;
                 ans += temp;
@@ -78,19 +78,3 @@ struct Dinic{
     }
 
 };
-Dinic<int> di;
-int main()
-{
-    int T = 0,Time,n,m;
-    scanf("%d",&Time);
-    while(Time-- && scanf("%d%d",&n,&m)==2){
-        di.init(n);
-        int a,b,c;
-        for(int i=0; i<m; i++){
-            scanf("%d%d%d",&a,&b,&c);
-            di.addEdge(a,b,c,true);
-        }
-        printf("Case %d: %d\n",++T,di.maxFlow(1,n));
-    }
-    return 0;
-}
