@@ -76,5 +76,5 @@ struct Dinic{
         }
         return ans;
     }
-
 };
+

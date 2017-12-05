@@ -1,6 +1,6 @@
-void convex_hull(vector<Point> &ps, Polygon &hull) {
+void convex_hull(vector<Point> &ps, vector<Point> &hull) {
 	// Find convex hull of ps, store in hull
-	vector<Point> &stk=hull.V;
+	vector<Point> &stk=hull;
 	stk.resize(ps.size()+1);
 	sort(ps.begin(),ps.end()); // Using x to cmp, y secondary.
 	int t=-1; // top
