@@ -10,6 +10,9 @@ struct Dinic{
         Edge(int _f,int _to,T _c):f(_f),to(_to),c(_c){}
     };
 
+	// IMPORETANT
+    // maxn is the number of vertices in the graph
+    // Not the N in the problem statement!!
     vector<int> G[maxn];
     vector<Edge> es;
     int level[maxn],st, end, n;
