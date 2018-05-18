@@ -1,7 +1,8 @@
+尤拉公式: V-E+F = C+1
 滿足ceil(n/i)=k之最大i:
 	INF, if k=1
 	n/(k-1)-1, else if k-1 整除 n
-	x/(k-1), else
+	n/(k-1), else
 滿足floor(n/i)=k之最大i: floor(n/k)
 尤拉函數: phi(n)=n乘上所有(1-1/p)，對n之所有質因數p
 費馬小定理: a * a^(p-2) = 1 (mod p), a,p互質
@@ -18,6 +19,10 @@
 最大匹配=最大流(二分圖)
 最大匹配=最小點覆蓋(二分圖)
 最小點覆蓋+最小邊覆蓋=V(數值，二分圖)
+
+對於可以換樹根的樹 以點1為準建LCA:
+若r為當前根, x, y為兩點，則新樹中x,y的lca為:
+lowest vertex({ LCA(x,y), LCA(r,x), LCA(r,y) }) (深度最深)
 
 一矩陣A所有eigen value之合=對角線合
 一矩陣A所有eigen value之積=det(A)

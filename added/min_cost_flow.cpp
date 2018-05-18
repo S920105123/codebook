@@ -31,7 +31,7 @@ struct Min_cost_flow {
         for (int i=0;i<=V;i++) G[i].clear();
         es.clear();
     }
-    int add_edge(int fr, int to, int cap, int cost) {
+    int add_edge(int fr, int to, T cap, T cost) {
         es.pb({fr,to,cap,cost});
         es.pb({to,fr,0,-cost});
         G[fr].push_back(E);
@@ -39,7 +39,7 @@ struct Min_cost_flow {
         E+=2;
         return E-2;
     }
-    bool SPFA(int s, int t, int &ans_flow, int &ans_cost) {
+    bool SPFA(int s, int t, T &ans_flow, T &ans_cost) {
 		queue<int> que;
         int pre[MAXV+5];
 		T dist[MAXV+5],flow[MAXV+5];

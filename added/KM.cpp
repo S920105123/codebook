@@ -4,11 +4,12 @@ using namespace std;
 
 template<class T>
 struct KM { //O(V^3), 1-based
-	#define INF 0x3f3f3f3f
 	// # of vertices in both side must be the same
 	// Non-exist edge weight=0
 	// g: weight, n: # of vertices
+	// match_x[i]: who match i-th node in left hand side of the bipartite graph
 	#define MAXN 1005 // Must add 5 !!
+	const T INF = 0x3f3f3f3f;
 	T g[MAXN][MAXN],lx[MAXN],ly[MAXN],slack_y[MAXN];
 	int n,match_y[MAXN],match_x[MAXN],pa[MAXN];
 	bool vx[MAXN],vy[MAXN];
@@ -38,7 +39,7 @@ struct KM { //O(V^3), 1-based
 					}else if(slack_y[y]>t)pa[y]=x,slack_y[y]=t;
 				}
 			}
-			int cut=INF;
+			T cut=INF;
 			for(int y=1;y<=n;++y){
 				if(!vy[y]&&cut>slack_y[y])cut=slack_y[y];
 			}
@@ -57,7 +58,7 @@ struct KM { //O(V^3), 1-based
 	}
 	T km() {
 		memset(match_y,0,sizeof(int)*(n+1));
-		memset(ly,0,sizeof(int)*(n+1));
+		memset(ly,0,sizeof(T)*(n+1));
 		for(int x=1;x<=n;++x){
 			lx[x]=-INF;
 			for(int y=1;y<=n;++y)
