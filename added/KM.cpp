@@ -1,98 +1,111 @@
-#include <bits/stdc++.h>
-#define LL long long
-using namespace std;
-
 template<class T>
-struct KM { //O(V^3), 1-based
-	// # of vertices in both side must be the same
-	// Non-exist edge weight=0
-	// g: weight, n: # of vertices
-	// match_x[i]: who match i-th node in left hand side of the bipartite graph
-	#define MAXN 1005 // Must add 5 !!
-	const T INF = 0x3f3f3f3f;
-	T g[MAXN][MAXN],lx[MAXN],ly[MAXN],slack_y[MAXN];
-	int n,match_y[MAXN],match_x[MAXN],pa[MAXN];
-	bool vx[MAXN],vy[MAXN];
-	void init(int _n) {
-		n=_n;
-		memset(g,0,sizeof(g));
-	}
-	void augment(int y){
-		for(int x,z;y;y=z){
-			x=pa[y],z=match_x[x];
-			match_y[y]=x,match_x[x]=y;
-		}
-	}
-	void bfs(int st){
-		for(int i=1;i<=n;++i)slack_y[i]=INF,vx[i]=vy[i]=0;
-		queue<int> q;q.push(st);
-		for(;;){
-			while(q.size()){
-				int x=q.front();q.pop();
-				vx[x]=1;
-				for(int y=1;y<=n;++y)if(!vy[y]){
-					int t=lx[x]+ly[y]-g[x][y];
-					if(t==0){
-						pa[y]=x;
-						if(!match_y[y]){augment(y);return;}
-						vy[y]=1,q.push(match_y[y]);
-					}else if(slack_y[y]>t)pa[y]=x,slack_y[y]=t;
-				}
-			}
-			T cut=INF;
-			for(int y=1;y<=n;++y){
-				if(!vy[y]&&cut>slack_y[y])cut=slack_y[y];
-			}
-			for(int j=1;j<=n;++j){
-				if(vx[j])lx[j]-=cut;
-				if(vy[j])ly[j]+=cut;
-				else slack_y[j]-=cut;
-			}
-			for(int y=1;y<=n;++y){
-				if(!vy[y]&&slack_y[y]==0){
-					if(!match_y[y]){augment(y);return;}
-					vy[y]=1,q.push(match_y[y]);
-				}
-			}
-		}
-	}
-	T km() {
-		memset(match_y,0,sizeof(int)*(n+1));
-		memset(ly,0,sizeof(T)*(n+1));
-		for(int x=1;x<=n;++x){
-			lx[x]=-INF;
-			for(int y=1;y<=n;++y)
-				lx[x]=max(lx[x],g[x][y]);
-		}
-		for(int x=1;x<=n;++x)bfs(x);
-		T ans=0;
-		for(int y=1;y<=n;++y)ans+=g[match_y[y]][y];
-		return ans;
-	}
-};
+struct KM_n_3
+{
+    T G[maxn][maxn];
+    T lx[maxn], ly[maxn], y_slack[maxn];
+    int x_match[maxn], y_match[maxn];
+    int px[maxn], py[maxn];  
+    int y_par[maxn]; 
+    int n;
 
-KM<LL> algo;
+    void toggle(int y){
+        x_match[py[y]] = y;
+        y_match[y] = py[y];
+        if(px[y_match[y]]!=-2) toggle(px[y_match[y]]);
+    }
 
-int main() {
-	ios_base::sync_with_stdio(false); cin.tie(0);
-	int m,n,k,N;
-	cin>>m>>n>>k;
-	N=max(m,n);
-	algo.init(N);
-	for (int i=0;i<k;i++) {
-		int f,t;
-		cin>>f>>t;
-		cin>>algo.g[f][t];
-	}
-	cout<<algo.km()<<endl;
-	vector<pair<int,int>> ans;
-	for (int i=1;i<=n;i++) {
-		if (algo.match_x[i]<=m) {
-			ans.push_back({i,algo.match_x[i]});
-		}
-	}
-	cout<<ans.size()<<endl;
-	for (int i=0;i<ans.size();i++) {
-		cout<<ans[i].first<<' '<<ans[i].second<<endl;
-	}
-}
+    /* n = |L| = |R|, id of nodes start with 1*/
+    int init(int _n){
+        n = _n;
+        for(int i=0; i<=n; i++){
+            for(int j=0; j<=n; j++)
+                G[i][j] = 0;
+        }
+    }
+
+    int add_edge(int a, int b, T c){ G[a][b] = c; }
+
+    int dfs(int x){
+        for(int y=1; y<=n; y++){
+            if(py[y]) continue;
+            T slack = lx[x] + ly[y] - G[x][y];
+            if(slack==0){
+                py[y] = x;
+                if(y_match[y]==0){
+                    toggle(y);
+                    return true;
+                }
+                else{
+                    if(px[y_match[y]]) continue;
+                    px[ y_match[y] ] = y;
+                    if(dfs(y_match[y])) return 1;
+                }
+            }
+            else if(y_slack[y] > slack){
+                y_slack[y] = slack;
+                y_par[y] = x;
+            }
+        }
+        return false;
+    }
+
+    void update(vector<int>& Y){
+        Y.clear();
+        T d = INF;
+        for(int i=1; i<=n; i++) if(!py[i]) d = min(d, y_slack[i]);
+
+        for(int i=1; i<=n; i++){
+            if(px[i]) lx[i] -= d;
+            if(py[i]) ly[i] += d;
+            else{
+                y_slack[i] -= d;
+                if(y_slack[i]==0) Y.push_back(i);
+            }
+        }
+    }
+
+    T km(){
+        for(int i=0; i<=n; i++) x_match[i] = y_match[i] = 0;
+        for(int i=1; i<=n; i++){
+            lx[i] = G[i][1], ly[i] = 0;
+            for(int j=1; j<=n; j++)
+                lx[i] = max(lx[i], G[i][j]);
+        }
+
+        for(int i=1; i<=n; i++){
+            for(int j=0; j<=n; j++) y_slack[j] = INF;
+            for(int j=0; j<=n; j++) px[j] = py[j] = 0;
+            px[i] = -2;
+            if(dfs(i)) continue;
+
+            // adjust labeling until finding an augmenting path
+            bool find = false;
+            while(!find){
+                vector<int> Y;
+                update(Y);
+                for(auto y:Y){
+                    if(find) break;
+                    py[y] = y_par[y];
+                    if(y_match[y]==0){
+                        toggle(y);
+                        find = true;
+                    }
+                    else{
+                        px[ y_match[y] ] = y;
+                        if(dfs(y_match[y])) find = true;
+                    }
+                }
+            }
+        }
+
+        T ans = 0;
+        for(int x=1; x<=n; x++) ans += G[x][x_match[x]];
+        return ans;
+    }
+
+    void dump(vector<pair<int,int>>& ans){
+        for(int i=1; i<=n; i++) if(G[i][x_match[i]]!=0){
+            ans.push_back({i, x_match[i]});
+        }
+    }
+} 
